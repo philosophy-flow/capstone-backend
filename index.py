@@ -79,6 +79,7 @@ def preprocess_data(title: str, content: str):
 
     return padded
 
+@app.head("/")
 @app.get("/")
 def read_root():
     return {"status": "OK"}
