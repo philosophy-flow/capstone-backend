@@ -3,6 +3,7 @@ services:
     name: fastapi-app
     env: python
     buildCommand: |
+      echo "python-3.10" > ~/.python-version
       pip install -r requirements.txt
       mkdir -p model
       wget https://pub-3be69f4106814950a54806c953e591f6.r2.dev/model/model.keras -O ./model/model.keras
