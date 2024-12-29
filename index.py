@@ -9,6 +9,8 @@ from nltk.stem import WordNetLemmatizer
 import re
 import traceback
 from fastapi.middleware.cors import CORSMiddleware
+import psutil
+import os
 
 nltk.download('stopwords')
 nltk.download('wordnet')
@@ -22,6 +24,11 @@ with open(tokenizer_path, 'rb') as handle:
     tokenizer = pickle.load(handle)
 
 model = tf.keras.models.load_model(model_path)
+
+def print_memory_usage():
+    process = psutil.Process(os.getpid())
+    mem_info = process.memory_info()
+    print(f"Memory Usage: {mem_info.rss / 1024 ** 2:.2f} MB")
 
 origins = [
     "http://localhost:3000",  
@@ -40,6 +47,9 @@ app.add_middleware(
 class Article(BaseModel):
     title: str
     content: str
+
+
+print_memory_usage()
 
 def preprocess_data(title: str, content: str):
     lemmatizer = WordNetLemmatizer()
@@ -69,6 +79,9 @@ def preprocess_data(title: str, content: str):
 
     return padded
 
+@app.get("/")
+def read_root():
+    return {"status": "OK"}
 
 @app.post("/predict/")
 async def predict_article(article: Article):
@@ -76,9 +89,12 @@ async def predict_article(article: Article):
         # Preprocess data
         clean_data = preprocess_data(article.title, article.content)
 
+        print_memory_usage()
+
         # Perform inference
         prediction = model.predict(clean_data)
         label = "REAL" if prediction[0][0] > 0.5 else "FAKE"
+        print_memory_usage()
         return {"title": article.title, "prediction": label}
     except Exception as e:
         error_trace = traceback.format_exc()
