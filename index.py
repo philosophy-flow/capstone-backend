@@ -32,7 +32,7 @@ def print_memory_usage():
 
 origins = [
     "http://localhost:3000",  
-    "https://fakenewsflush.io"
+    "https://fakenewsflush.app"
 ]
 
 app.add_middleware(
