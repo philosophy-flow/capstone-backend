@@ -1,0 +1,16 @@
+FROM python:3.10
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install -r requirements.txt && \
+    mkdir -p model && \
+    wget https://pub-3be69f4106814950a54806c953e591f6.r2.dev/model/model.keras -O ./model/model.keras && \
+    wget https://pub-3be69f4106814950a54806c953e591f6.r2.dev/model/tokenizer.pkl -O ./model/tokenizer.pkl
+
+COPY . .
+
+EXPOSE 8000
+
+CMD ["uvicorn", "index:app", "--host", "0.0.0.0", "--port", "8000"]

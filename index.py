@@ -84,7 +84,7 @@ def preprocess_data(title: str, content: str):
 def read_root():
     return {"status": "OK"}
 
-@app.post("/predict/")
+@app.post("/predict")
 async def predict_article(article: Article):
     try:
         # Preprocess data
